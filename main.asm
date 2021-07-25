@@ -33,7 +33,9 @@ _start:
 	INT 0x10
 	MOV	AL, 0x0D	; return carriage
 	INT	0x10
-	MOV	AL, ''		; O
+	MOV	AL, 'O'		; O
+	INT 0x10
+	MOV	AL, 'k'
 	INT 0x10
 	MOV	AL, '>'		; >
 	INT 0x10
@@ -61,7 +63,8 @@ _start:
 	JMP .loop
 .delete:
 	CMP CX, 0
-	JLE	.loop
+	MOV	[cursorBackup], CX
+	JE	.loop
 	; getting current character position
 	MOV	AH, 0x03
 	XOR	BH, BH
@@ -81,7 +84,9 @@ _start:
 	; going back again
 	MOV	AH, 0x02
 	INT 0x10
-	
+
+	MOV CX, [cursorBackup]
+	DEC	CX	
 	JMP	.loop
 .continue:
 	MOV	AH, 0x0E
@@ -233,6 +238,8 @@ _start:
 	JMP .execle
 	
 inputBufUsed:
+	DW	0
+cursorBackup:
 	DW	0
 TIMES	510 - ($ - $$) DB 0
 DW		0xAA55
