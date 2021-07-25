@@ -3,8 +3,10 @@
 
 lowMemAddr:		equ 0
 inputBuf:		equ 0
+stackLow:		equ 0
 inputBufLength:	equ 0xFFFF
 highMemAddr:	equ 0xFFFF
+stackHigh:		equ 0xFFFF
 memAddrLength:	equ highMemAddr - lowMemAddr - 1
 
 index:
@@ -24,6 +26,9 @@ _start:
 	MOV	ES, BX		; cell segment
 	MOV	BX, 0x1600
 	MOV	GS, BX		; input buffer segment
+	MOV	BX, 0x1900
+	MOV	SS, BX		; stack segment
+	MOV	SP, stackHigh	; stack top
 .reset:
 	MOV WORD [inputBufUsed], 0
 	MOV	AH, 0x0E
@@ -63,7 +68,7 @@ _start:
 	JMP .loop
 .delete:
 	CMP CX, 0
-	MOV	[cursorBackup], CX
+	PUSH CX
 	JE	.loop
 	; getting current character position
 	MOV	AH, 0x03
@@ -85,7 +90,7 @@ _start:
 	MOV	AH, 0x02
 	INT 0x10
 
-	MOV CX, [cursorBackup]
+	POP CX
 	DEC	CX	
 	JMP	.loop
 .continue:
@@ -238,8 +243,6 @@ _start:
 	JMP .execle
 	
 inputBufUsed:
-	DW	0
-cursorBackup:
 	DW	0
 TIMES	510 - ($ - $$) DB 0
 DW		0xAA55
