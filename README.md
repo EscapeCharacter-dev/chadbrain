@@ -18,3 +18,6 @@ These are the instructions supported:
  - `^`, Sets current cell value to 0xFF  
 Pressing the ESCAPE key during instruction fetch will stop the current
    command.
+## Help, it's doing weird stuff!
+Restarting the machine should fix the bug. You can still make a pull
+request if you think you found a bug in the code.
